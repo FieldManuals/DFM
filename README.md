@@ -309,7 +309,7 @@ docker-compose down --rmi all
 - Monitoring and observability
 - CI/CD integration
 
-**Available:** Amazon KDP (Paperback & eBook)
+**Available:** Amazon KDP (Paperback)
 
 ---
 
@@ -357,8 +357,8 @@ SOFTWARE.
 
 ## 🔗 Links
 
-- **Book on Amazon:** [Link to be added]
-- **Author Website:** [Link to be added]
+- **Book on Amazon:** [DFM: Docker Field Manual](https://www.amazon.com/dp/B0FWZLX64P)
+- **Author Website:** [PTFM](https://purpleteamfieldmanual.com)
 - **Report Issues:** [GitHub Issues](https://github.com/fiber-pilot/docker-field-manual-code/issues)
 - **Discussions:** [GitHub Discussions](https://github.com/fiber-pilot/docker-field-manual-code/discussions)
 
