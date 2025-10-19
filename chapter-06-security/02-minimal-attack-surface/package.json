@@ -1,0 +1,12 @@
+{
+  "name": "minimal-surface-app",
+  "version": "1.0.0",
+  "description": "Minimal attack surface demonstration",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["docker", "security", "minimal"],
+  "author": "",
+  "license": "MIT"
+}

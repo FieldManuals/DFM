@@ -1,0 +1,12 @@
+{
+  "name": "readonly-app",
+  "version": "1.0.0",
+  "description": "Demo app for read-only filesystem security",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["docker", "security", "readonly"],
+  "author": "",
+  "license": "MIT"
+}

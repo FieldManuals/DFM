@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  # WordPress Service
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      # Database connection
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress_password
+    volumes:
+      # Persist WordPress files
+      - wordpress_data:/var/www/html
+    networks:
+      - wordpress_network
+    depends_on:
+      - db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # MySQL Database Service
+  db:
+    image: mysql:8.0
+    container_name: wordpress_db
+    restart: unless-stopped
+    environment:
+      # MySQL configuration
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress_password
+      MYSQL_ROOT_PASSWORD: root_password
+      # MySQL optimization
+      MYSQL_INITDB_SKIP_TZINFO: 1
+    volumes:
+      # Persist database files
+      - db_data:/var/lib/mysql
+    networks:
+      - wordpress_network
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --max_connections=200
+      --innodb-buffer-pool-size=256M
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # phpMyAdmin Service (Optional - for database management)
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root_password
+    networks:
+      - wordpress_network
+    depends_on:
+      - db
+
+# Docker volumes for data persistence
+volumes:
+  wordpress_data:
+    name: wordpress_data
+  db_data:
+    name: db_data
+
+# Custom network
+networks:
+  wordpress_network:
+    name: wordpress_network
+    driver: bridge

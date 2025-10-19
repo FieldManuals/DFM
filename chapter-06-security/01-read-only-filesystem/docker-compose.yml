@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  # Read-only filesystem with tmpfs mounts
+  app-readonly:
+    build: .
+    ports:
+      - "3000:3000"
+    read_only: true  # Root filesystem is read-only
+    tmpfs:
+      - /tmp:size=10M,mode=1777  # Temporary writable storage
+      - /tmp/app-cache:size=50M,uid=1000,gid=1000
+    environment:
+      - CACHE_DIR=/tmp/app-cache
+    security_opt:
+      - no-new-privileges:true  # Prevent privilege escalation
+    cap_drop:
+      - ALL  # Drop all capabilities
+    cap_add:
+      - NET_BIND_SERVICE  # Only add what's needed

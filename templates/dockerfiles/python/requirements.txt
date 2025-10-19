@@ -1,0 +1,11 @@
+Flask==3.0.0
+gunicorn==21.2.0
+requests==2.31.0
+
+# Optional: FastAPI alternative
+# fastapi==0.104.1
+# uvicorn[standard]==0.24.0
+
+# Optional: Django alternative  
+# Django==4.2.7
+# psycopg2-binary==2.9.9

@@ -1,0 +1,69 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'docker-monitoring'
+    environment: 'production'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+# Load rules
+rule_files:
+  - 'alerts.yml'
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+
+  # Node Exporter - Host metrics
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          service: 'node-exporter'
+
+  # cAdvisor - Container metrics
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+        labels:
+          service: 'cadvisor'
+
+  # Docker daemon metrics (if enabled)
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['host.docker.internal:9323']
+        labels:
+          service: 'docker'
+    # Requires Docker daemon metrics enabled:
+    # {
+    #   "metrics-addr": "0.0.0.0:9323",
+    #   "experimental": true
+    # }
+
+  # Example application
+  - job_name: 'demo-app'
+    static_configs:
+      - targets: ['demo-app:8080']
+        labels:
+          service: 'demo-app'
+          environment: 'production'
+
+  # Add your applications here
+  # - job_name: 'my-app'
+  #   static_configs:
+  #     - targets: ['my-app:8080']
+  #       labels:
+  #         service: 'my-app'
+  #   metrics_path: '/actuator/prometheus'  # For Spring Boot
+  #   # metrics_path: '/metrics'  # For Node.js/Python

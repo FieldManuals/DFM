@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Application with secrets from environment
+  app:
+    image: nginx:alpine
+    secrets:
+      - db_password
+      - api_key
+    environment:
+      - DB_HOST=db
+      - DB_USER=appuser
+      # Password loaded from secret file
+      - DB_PASSWORD_FILE=/run/secrets/db_password
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8080:80"
+
+  # Database using secrets
+  db:
+    image: postgres:15-alpine
+    secrets:
+      - db_password
+    environment:
+      - POSTGRES_USER=appuser
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+      - POSTGRES_DB=appdb
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  api_key:
+    file: ./secrets/api_key.txt
+
+volumes:
+  db_data:

@@ -1,0 +1,22 @@
+# Hardened Alpine image with dropped capabilities
+FROM alpine:3.19
+
+# Install runtime only (no build tools, no shell convenience tools)
+RUN apk add --no-cache \
+    nodejs=~20 \
+    && rm -rf /var/cache/apk/*
+
+# Create non-root user
+RUN addgroup -g 1000 appuser && \
+    adduser -D -u 1000 -G appuser appuser
+
+WORKDIR /app
+
+COPY --chown=appuser:appuser package*.json ./
+COPY --chown=appuser:appuser server.js ./
+
+USER appuser
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]

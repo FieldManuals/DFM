@@ -1,0 +1,20 @@
+# Multi-stage build with minimal attack surface
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Final stage with distroless image (no shell, no package manager)
+FROM gcr.io/distroless/nodejs18-debian11:nonroot
+
+WORKDIR /app
+
+# Copy from builder
+COPY --from=builder /app/node_modules ./node_modules
+COPY --chown=nonroot:nonroot . .
+
+# Already runs as nonroot user (uid=65532)
+EXPOSE 3000
+
+CMD ["server.js"]
